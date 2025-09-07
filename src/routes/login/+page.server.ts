@@ -1,11 +1,25 @@
-import { hash, verify } from '@node-rs/argon2';
-import { encodeBase32LowerCase } from '@oslojs/encoding';
-import { fail, redirect } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
 import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
+import { encodeBase32LowerCase } from '@oslojs/encoding';
+import { fail, redirect } from '@sveltejs/kit';
+import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
+
+// Web Crypto API-based password hashing for Cloudflare Workers compatibility
+async function hashPassword(password: string): Promise<string> {
+	const encoder = new TextEncoder();
+	const data = encoder.encode(password);
+	const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+	const hashArray = Array.from(new Uint8Array(hashBuffer));
+	const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+	return hashHex;
+}
+
+async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+	const passwordHash = await hashPassword(password);
+	return passwordHash === hashedPassword;
+}
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -36,12 +50,7 @@ export const actions: Actions = {
 			return fail(400, { message: 'Incorrect username or password' });
 		}
 
-		const validPassword = await verify(existingUser.passwordHash, password, {
-			memoryCost: 19456,
-			timeCost: 2,
-			outputLen: 32,
-			parallelism: 1
-		});
+		const validPassword = await verifyPassword(password, existingUser.passwordHash);
 		if (!validPassword) {
 			return fail(400, { message: 'Incorrect username or password' });
 		}
@@ -65,13 +74,7 @@ export const actions: Actions = {
 		}
 
 		const userId = generateUserId();
-		const passwordHash = await hash(password, {
-			// recommended minimum parameters
-			memoryCost: 19456,
-			timeCost: 2,
-			outputLen: 32,
-			parallelism: 1
-		});
+		const passwordHash = await hashPassword(password);
 
 		try {
 			await db.insert(table.user).values({ id: userId, username, passwordHash });
