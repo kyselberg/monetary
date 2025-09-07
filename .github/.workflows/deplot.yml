@@ -1,0 +1,30 @@
+image: node:24
+
+rules:
+  branches:
+    - main
+
+stages: [build, deploy]
+
+variables:
+  NPM_CONFIG_FUND: 'false'
+  NPM_CONFIG_AUDIT: 'false'
+
+cache:
+  paths:
+    - node_modules
+
+build:
+  stage: build
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - .svelte-kit
+
+deploy:
+  stage: deploy
+  script:
+    - npm ci --omit=dev
+    - npx wrangler deploy
