@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { nanoid } from 'nanoid';
 	import type { PageServerData } from './$types';
 	let { data }: { data: PageServerData } = $props();
 
@@ -20,6 +21,7 @@
 
 	// Form data for single expense (edit modal)
 	let formData = $state({
+		id: '',
 		name: '',
 		amount: '',
 		date: new Date().toISOString().split('T')[0] // Today's date in YYYY-MM-DD format
@@ -29,6 +31,7 @@
 	let multiExpenseData = $state({
 		expenses: [
 			{
+				id: '',
 				name: '',
 				amount: '',
 				date: new Date().toISOString().split('T')[0]
@@ -58,6 +61,7 @@
 		showModal = true;
 		// Reset form
 		formData = {
+			id: nanoid(),
 			name: '',
 			amount: '',
 			date: new Date().toISOString().split('T')[0]
@@ -66,6 +70,7 @@
 		multiExpenseData = {
 			expenses: [
 				{
+					id: nanoid(),
 					name: '',
 					amount: '',
 					date: new Date().toISOString().split('T')[0]
@@ -108,6 +113,7 @@
 		expenseToEdit = expense;
 		// Pre-populate form with expense data
 		formData = {
+			id: expense.id,
 			name: expense.name,
 			amount: (expense.amountCents / 100).toFixed(2),
 			date: expense.date.toISOString().split('T')[0]
@@ -121,6 +127,7 @@
 		expenseToEdit = null;
 		// Reset form
 		formData = {
+			id: nanoid(),
 			name: '',
 			amount: '',
 			date: new Date().toISOString().split('T')[0]
@@ -136,6 +143,7 @@
 	// Multi-expense form management
 	function addExpenseRow() {
 		multiExpenseData.expenses.push({
+			id: nanoid(),
 			name: '',
 			amount: '',
 			date: new Date().toISOString().split('T')[0]
@@ -151,6 +159,7 @@
 	function clearAllExpenses() {
 		multiExpenseData.expenses = [
 			{
+				id: nanoid(),
 				name: '',
 				amount: '',
 				date: new Date().toISOString().split('T')[0]
@@ -625,7 +634,7 @@
 
 					<!-- Expense rows -->
 					<div class="max-h-96 space-y-4 overflow-y-auto">
-						{#each multiExpenseData.expenses as expense, index (expense.date)}
+						{#each multiExpenseData.expenses as expense, index (expense.id)}
 							<div class="card bg-base-200 p-4">
 								<div class="mb-3 flex items-center justify-between">
 									<h4 class="font-semibold text-base-content">Expense #{index + 1}</h4>
