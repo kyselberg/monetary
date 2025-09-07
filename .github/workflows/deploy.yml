@@ -38,8 +38,15 @@ jobs:
       - name: Build application
         run: pnpm run build
 
+      - name: List build output
+        run: |
+          echo "Checking .svelte-kit directory:"
+          ls -la .svelte-kit/ || echo "No .svelte-kit directory found"
+          echo "Checking .svelte-kit/cloudflare directory:"
+          ls -la .svelte-kit/cloudflare/ || echo "No .svelte-kit/cloudflare directory found"
+
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: sveltekit-build
           path: .svelte-kit/
@@ -59,10 +66,17 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: sveltekit-build
           path: .svelte-kit/
+
+      - name: Verify downloaded artifacts
+        run: |
+          echo "Checking downloaded .svelte-kit directory:"
+          ls -la .svelte-kit/ || echo "No .svelte-kit directory found"
+          echo "Checking .svelte-kit/cloudflare directory:"
+          ls -la .svelte-kit/cloudflare/ || echo "No .svelte-kit/cloudflare directory found"
 
       - name: Install wrangler
         run: npm install -g wrangler
