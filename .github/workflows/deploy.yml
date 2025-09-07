@@ -49,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sveltekit-build
-          path: .svelte-kit/
+          path: ./
           retention-days: 1
 
   deploy:
@@ -69,7 +69,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: sveltekit-build
-          path: .svelte-kit/
+          path: ./
 
       - name: Verify downloaded artifacts
         run: |
