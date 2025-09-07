@@ -1,12 +1,15 @@
 {
-	"name": "monetary",
-	"account_id": "6de45596d06e6d135a4508ae0e267971",
-	"main": "./.cloudflare/worker.js",
+	"name": "monetary-worker",
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"compatibility_date": "2025-09-07",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
 	"site": {
-		"bucket": "./.cloudflare/public"
+		"bucket": ".svelte-kit/cloudflare"
 	},
-	"build": {
-		"command": "npm run build"
-	},
-	"compatibility_date": "2025-09-07"
+	"compatibility_flags": [
+		"nodejs_compat"
+	]
 }
