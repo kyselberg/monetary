@@ -9,6 +9,7 @@ env:
   NPM_CONFIG_FUND: 'false'
   NPM_CONFIG_AUDIT: 'false'
   NODE_ENV: 'production'
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
 jobs:
   build:
