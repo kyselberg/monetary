@@ -6,6 +6,11 @@ export async function createExpense(expense: table.Expenses): Promise<void> {
 	await db.insert(table.expenses).values(expense);
 }
 
+export async function createMultipleExpenses(expenses: table.Expenses[]): Promise<void> {
+	if (expenses.length === 0) return;
+	await db.insert(table.expenses).values(expenses);
+}
+
 export async function getExpenses(userId: string): Promise<table.Expenses[]> {
 	return await db
 		.select()

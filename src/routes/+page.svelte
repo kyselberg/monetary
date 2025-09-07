@@ -11,11 +11,22 @@
 	let expenseToDelete = $state<{ id: string; name: string; amountCents: number; date: Date } | null>(null);
 	let expenseToEdit = $state<{ id: string; name: string; amountCents: number; date: Date } | null>(null);
 
-	// Form data
+	// Form data for single expense (edit modal)
 	let formData = $state({
 		name: '',
 		amount: '',
 		date: new Date().toISOString().split('T')[0] // Today's date in YYYY-MM-DD format
+	});
+
+	// Multi-expense form data
+	let multiExpenseData = $state({
+		expenses: [
+			{
+				name: '',
+				amount: '',
+				date: new Date().toISOString().split('T')[0]
+			}
+		]
 	});
 
 	// Format amount from cents to UAH
@@ -43,6 +54,16 @@
 			name: '',
 			amount: '',
 			date: new Date().toISOString().split('T')[0]
+		};
+		// Reset multi-expense form
+		multiExpenseData = {
+			expenses: [
+				{
+					name: '',
+					amount: '',
+					date: new Date().toISOString().split('T')[0]
+				}
+			]
 		};
 	}
 
@@ -105,6 +126,46 @@
 		// The page will automatically refresh due to the form submission
 	}
 
+	// Multi-expense form management
+	function addExpenseRow() {
+		multiExpenseData.expenses.push({
+			name: '',
+			amount: '',
+			date: new Date().toISOString().split('T')[0]
+		});
+	}
+
+	function removeExpenseRow(index: number) {
+		if (multiExpenseData.expenses.length > 1) {
+			multiExpenseData.expenses.splice(index, 1);
+		}
+	}
+
+	function clearAllExpenses() {
+		multiExpenseData.expenses = [
+			{
+				name: '',
+				amount: '',
+				date: new Date().toISOString().split('T')[0]
+			}
+		];
+	}
+
+	// Get total amount for multi-expense form
+	function getTotalAmount(): number {
+		return multiExpenseData.expenses.reduce((total, expense) => {
+			const amount = parseFloat(expense.amount) || 0;
+			return total + amount;
+		}, 0);
+	}
+
+	// Check if multi-expense form has valid data
+	function hasValidExpenses(): boolean {
+		return multiExpenseData.expenses.some(expense =>
+			expense.name.trim() && expense.amount && parseFloat(expense.amount) > 0
+		);
+	}
+
 </script>
 
 <svelte:head>
@@ -118,7 +179,7 @@
 			<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 			</svg>
-			Add Expense
+			Add Expenses
 		</button>
 	</div>
 
@@ -209,7 +270,7 @@
 						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 						</svg>
-						Add Your First Expense
+						Add Your First Expenses
 					</button>
 				</div>
 			</div>
@@ -371,12 +432,12 @@
 	</div>
 {/if}
 
-<!-- Add Expense Modal -->
+<!-- Add Multiple Expenses Modal -->
 {#if showModal}
 	<div class="modal modal-open">
-		<div class="modal-box">
+		<div class="modal-box max-w-4xl">
 			<div class="flex justify-between items-center mb-4">
-				<h3 class="text-2xl font-bold text-base-content">Add New Expense</h3>
+				<h3 class="text-2xl font-bold text-base-content">Add Multiple Expenses</h3>
 				<button class="btn btn-sm btn-circle btn-ghost" onclick={closeModal} aria-label="Close modal">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -384,81 +445,129 @@
 				</button>
 			</div>
 
-			<form use:enhance={handleSuccess} action="?/createExpense" method="post">
-				<div class="form-control mb-4">
-					<label class="label" for="name">
-						<span class="label-text font-semibold">Expense Name</span>
-					</label>
-					<input
-						type="text"
-						id="name"
-						name="name"
-						class="input input-bordered w-full"
-						placeholder="e.g., Groceries, Gas, Coffee"
-						bind:value={formData.name}
-						required
-						disabled={isSubmitting}
-					/>
-					<div class="label">
-						<span class="label-text-alt text-base-content/60">Enter a descriptive name for this expense</span>
+			<form use:enhance={handleSuccess} action="?/createMultipleExpenses" method="post">
+				<div class="mb-6">
+					<div class="flex justify-between items-center mb-4">
+						<p class="text-base-content/80">Add multiple expenses at once. You can add or remove rows as needed.</p>
+						<div class="flex gap-2">
+							<button type="button" class="btn btn-sm btn-outline" onclick={addExpenseRow}>
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+								</svg>
+								Add Row
+							</button>
+							<button type="button" class="btn btn-sm btn-ghost" onclick={clearAllExpenses}>
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+								</svg>
+								Clear All
+							</button>
+						</div>
 					</div>
-				</div>
 
-				<div class="form-control mb-4">
-					<label class="label" for="amount">
-						<span class="label-text font-semibold">Amount</span>
-					</label>
-					<div class="relative">
-						<span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/60 z-10">₴</span>
-						<input
-							type="number"
-							id="amount"
-							name="amount"
-							class="input input-bordered w-full pl-8"
-							placeholder="0.00"
-							step="1"
-							min="0"
-							bind:value={formData.amount}
-							required
-							disabled={isSubmitting}
-						/>
-					</div>
-					<div class="label">
-						<span class="label-text-alt text-base-content/60">Enter the expense amount in UAH</span>
-					</div>
-				</div>
+					<!-- Expense rows -->
+					<div class="space-y-4 max-h-96 overflow-y-auto">
+						{#each multiExpenseData.expenses as expense, index}
+							<div class="card bg-base-200 p-4">
+								<div class="flex items-center justify-between mb-3">
+									<h4 class="font-semibold text-base-content">Expense #{index + 1}</h4>
+									{#if multiExpenseData.expenses.length > 1}
+										<button
+											type="button"
+											class="btn btn-sm btn-ghost text-error"
+											onclick={() => removeExpenseRow(index)}
+										>
+											<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+											</svg>
+											Remove
+										</button>
+									{/if}
+								</div>
 
-				<div class="form-control mb-6">
-					<label class="label" for="date">
-						<span class="label-text font-semibold">Date</span>
-					</label>
-					<input
-						type="date"
-						id="date"
-						name="date"
-						class="input input-bordered w-full"
-						bind:value={formData.date}
-						required
-						disabled={isSubmitting}
-					/>
-					<div class="label">
-						<span class="label-text-alt text-base-content/60">Select the date of the expense</span>
+								<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+									<div class="form-control">
+										<label class="label" for="name-{index}">
+											<span class="label-text font-semibold">Name</span>
+										</label>
+										<input
+											type="text"
+											id="name-{index}"
+											name="expenses[{index}][name]"
+											class="input input-bordered w-full"
+											placeholder="e.g., Groceries, Gas"
+											bind:value={expense.name}
+											disabled={isSubmitting}
+										/>
+									</div>
+
+									<div class="form-control">
+										<label class="label" for="amount-{index}">
+											<span class="label-text font-semibold">Amount</span>
+										</label>
+										<div class="relative">
+											<span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/60 z-10">₴</span>
+											<input
+												type="number"
+												id="amount-{index}"
+												name="expenses[{index}][amount]"
+												class="input input-bordered w-full pl-8"
+												placeholder="0.00"
+												step="0.01"
+												min="0"
+												bind:value={expense.amount}
+												disabled={isSubmitting}
+											/>
+										</div>
+									</div>
+
+									<div class="form-control">
+										<label class="label" for="date-{index}">
+											<span class="label-text font-semibold">Date</span>
+										</label>
+										<input
+											type="date"
+											id="date-{index}"
+											name="expenses[{index}][date]"
+											class="input input-bordered w-full"
+											bind:value={expense.date}
+											disabled={isSubmitting}
+										/>
+									</div>
+								</div>
+							</div>
+						{/each}
 					</div>
+
+					<!-- Total summary -->
+					{#if getTotalAmount() > 0}
+						<div class="mt-4 p-4 bg-primary/10 rounded-lg">
+							<div class="flex justify-between items-center">
+								<span class="font-semibold text-base-content">Total Amount:</span>
+								<span class="text-lg font-bold text-primary">
+									{formatAmount(Math.round(getTotalAmount() * 100))}
+								</span>
+							</div>
+							<div class="text-sm text-base-content/70 mt-1">
+								{multiExpenseData.expenses.length} expense{multiExpenseData.expenses.length === 1 ? '' : 's'}
+							</div>
+						</div>
+					{/if}
 				</div>
 
 				<div class="modal-action">
 					<button type="button" class="btn btn-ghost" onclick={closeModal} disabled={isSubmitting}>
 						Cancel
 					</button>
-					<button type="submit" class="btn btn-primary" disabled={isSubmitting}>
+					<button type="submit" class="btn btn-primary" disabled={isSubmitting || !hasValidExpenses()}>
 						{#if isSubmitting}
 							<span class="loading loading-spinner loading-sm"></span>
-							Adding...
+							Adding Expenses...
 						{:else}
 							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 							</svg>
-							Add Expense
+							Add {multiExpenseData.expenses.length} Expense{multiExpenseData.expenses.length === 1 ? '' : 's'}
 						{/if}
 					</button>
 				</div>

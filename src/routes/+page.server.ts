@@ -2,6 +2,7 @@ import { requireLogin } from '$lib';
 import type * as table from '$lib/server/db/schema';
 import {
 	createExpense,
+	createMultipleExpenses,
 	deleteExpense,
 	getExpenses,
 	getExpensesSummary,
@@ -99,6 +100,56 @@ export const actions: Actions = {
 
 		return {
 			success: true
+		};
+	},
+	createMultipleExpenses: async (event) => {
+		const user = requireLogin();
+		const data = await event.request.formData();
+
+		// Parse the expenses array from form data
+		const expenses: Array<{ name: string; amount: string; date: string }> = [];
+		let index = 0;
+
+		while (data.has(`expenses[${index}][name]`)) {
+			const name = data.get(`expenses[${index}][name]`)?.toString();
+			const amount = data.get(`expenses[${index}][amount]`)?.toString();
+			const date = data.get(`expenses[${index}][date]`)?.toString();
+
+			if (name && amount && date) {
+				expenses.push({ name, amount, date });
+			}
+			index++;
+		}
+
+		if (expenses.length === 0) {
+			return fail(400, { message: 'No valid expenses provided' });
+		}
+
+		// Validate and convert expenses
+		const validExpenses: table.Expenses[] = [];
+
+		for (const expense of expenses) {
+			const amountValue = parseFloat(expense.amount);
+			if (isNaN(amountValue) || amountValue <= 0) {
+				return fail(400, { message: `Invalid amount for expense: ${expense.name}` });
+			}
+
+			// Convert UAH to cents
+			const amountCents = Math.round(amountValue * 100);
+
+			validExpenses.push({
+				id: nanoid(),
+				userId: user.id,
+				name: expense.name.trim(),
+				amountCents,
+				date: new Date(expense.date)
+			});
+		}
+
+		await createMultipleExpenses(validExpenses);
+		return {
+			success: true,
+			count: validExpenses.length
 		};
 	}
 };
