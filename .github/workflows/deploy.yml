@@ -82,7 +82,10 @@ jobs:
           echo "Checking .svelte-kit/cloudflare directory:"
           ls -la .svelte-kit/cloudflare/ || echo "No .svelte-kit/cloudflare directory found"
 
-      - name: Install deps
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install prod deps
         run: pnpm install --frozen-lockfile --prod
 
       - name: Install wrangler
