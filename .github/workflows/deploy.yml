@@ -49,6 +49,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sveltekit-build
+          include-hidden-files: true
+          if-no-files-found: error
           path: ./.svelte-kit/
           retention-days: 1
 
@@ -70,6 +72,8 @@ jobs:
         with:
           name: sveltekit-build
           path: ./.svelte-kit/
+          include-hidden-files: true
+          if-no-files-found: error
 
       - name: Verify downloaded artifacts
         run: |
