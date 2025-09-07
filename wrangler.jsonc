@@ -1,0 +1,12 @@
+{
+	"name": "monetary",
+	"account_id": "6de45596d06e6d135a4508ae0e267971",
+	"main": "./.cloudflare/worker.js",
+	"site": {
+		"bucket": "./.cloudflare/public"
+	},
+	"build": {
+		"command": "npm run build"
+	},
+	"compatibility_date": "2025-09-07"
+}
