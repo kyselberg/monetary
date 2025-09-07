@@ -1,0 +1,1 @@
+ALTER TABLE "expenses" ALTER COLUMN "name" SET NOT NULL;
