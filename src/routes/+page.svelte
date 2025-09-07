@@ -8,8 +8,15 @@
 	let showDeleteModal = $state(false);
 	let showEditModal = $state(false);
 	let isSubmitting = $state(false);
-	let expenseToDelete = $state<{ id: string; name: string; amountCents: number; date: Date } | null>(null);
-	let expenseToEdit = $state<{ id: string; name: string; amountCents: number; date: Date } | null>(null);
+	let expenseToDelete = $state<{
+		id: string;
+		name: string;
+		amountCents: number;
+		date: Date;
+	} | null>(null);
+	let expenseToEdit = $state<{ id: string; name: string; amountCents: number; date: Date } | null>(
+		null
+	);
 
 	// Form data for single expense (edit modal)
 	let formData = $state({
@@ -161,11 +168,10 @@
 
 	// Check if multi-expense form has valid data
 	function hasValidExpenses(): boolean {
-		return multiExpenseData.expenses.some(expense =>
-			expense.name.trim() && expense.amount && parseFloat(expense.amount) > 0
+		return multiExpenseData.expenses.some(
+			(expense) => expense.name.trim() && expense.amount && parseFloat(expense.amount) > 0
 		);
 	}
-
 </script>
 
 <svelte:head>
@@ -173,10 +179,16 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8">
-	<div class="flex justify-between items-center mb-8">
+	<div class="mb-8 flex items-center justify-between">
 		<h1 class="text-3xl font-bold text-base-content">Expenses</h1>
 		<button class="btn btn-primary" onclick={openModal}>
-			<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="h-5 w-5"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+			>
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 			</svg>
 			Add Expenses
@@ -184,8 +196,8 @@
 	</div>
 
 	{#if data.expenses && data.expenses.length > 0}
-        <!-- Summary Card -->
-		<div class="stats shadow mb-6">
+		<!-- Summary Card -->
+		<div class="stats mb-6 shadow">
 			<div class="stat">
 				<div class="stat-title">Total Expenses</div>
 				<div class="stat-value text-primary">
@@ -205,46 +217,65 @@
 		<div class="card bg-base-100 shadow-xl">
 			<div class="card-body p-0">
 				<div class="overflow-x-auto">
-					<table class="table table-zebra w-full">
+					<table class="table w-full table-zebra">
 						<thead>
 							<tr>
-								<th class="text-base-content font-semibold">Name</th>
-								<th class="text-base-content font-semibold">Date</th>
-								<th class="text-base-content font-semibold">Amount</th>
-								<th class="text-base-content font-semibold">Actions</th>
+								<th class="font-semibold text-base-content">Name</th>
+								<th class="font-semibold text-base-content">Date</th>
+								<th class="font-semibold text-base-content">Amount</th>
+								<th class="font-semibold text-base-content">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
-							{#each data.expenses as expense}
+							{#each data.expenses as expense (expense.id)}
 								<tr class="hover">
-									<td class="text-base-content font-medium">
+									<td class="font-medium text-base-content">
 										{expense.name}
 									</td>
 									<td class="text-base-content/70">
 										{formatDate(expense.date)}
 									</td>
-									<td class="text-base-content font-medium">
+									<td class="font-medium text-base-content">
 										<span class="badge badge-outline badge-lg">
 											{formatAmount(expense.amountCents)}
 										</span>
 									</td>
 									<td>
 										<div class="flex gap-2">
-											<button
-												class="btn btn-ghost btn-sm"
-												onclick={() => openEditModal(expense)}
-											>
-												<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+											<button class="btn btn-ghost btn-sm" onclick={() => openEditModal(expense)}>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													class="h-4 w-4"
+													fill="none"
+													viewBox="0 0 24 24"
+													stroke="currentColor"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+													/>
 												</svg>
 												Edit
 											</button>
 											<button
-												class="btn btn-ghost btn-sm text-error"
+												class="btn text-error btn-ghost btn-sm"
 												onclick={() => openDeleteModal(expense)}
 											>
-												<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													class="h-4 w-4"
+													fill="none"
+													viewBox="0 0 24 24"
+													stroke="currentColor"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+													/>
 												</svg>
 												Delete
 											</button>
@@ -258,17 +289,41 @@
 			</div>
 		</div>
 	{:else}
-		<div class="hero min-h-96 bg-base-200 rounded-lg">
+		<div class="hero min-h-96 rounded-lg bg-base-200">
 			<div class="hero-content text-center">
 				<div class="max-w-md">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto text-base-content/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="mx-auto mb-4 h-24 w-24 text-base-content/20"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="1"
+							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+						/>
 					</svg>
-					<h2 class="text-2xl font-bold text-base-content mb-4">No expenses yet</h2>
-					<p class="text-base-content/70 mb-6">Start tracking your expenses by adding your first transaction.</p>
-					<button class="btn btn-primary btn-lg" onclick={openModal}>
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+					<h2 class="mb-4 text-2xl font-bold text-base-content">No expenses yet</h2>
+					<p class="mb-6 text-base-content/70">
+						Start tracking your expenses by adding your first transaction.
+					</p>
+					<button class="btn btn-lg btn-primary" onclick={openModal}>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-6 w-6"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M12 4v16m8-8H4"
+							/>
 						</svg>
 						Add Your First Expenses
 					</button>
@@ -280,24 +335,39 @@
 
 <!-- Delete Confirmation Modal -->
 {#if showDeleteModal && expenseToDelete}
-	<div class="modal modal-open">
+	<div class="modal-open modal">
 		<div class="modal-box">
-			<div class="flex justify-between items-center mb-4">
+			<div class="mb-4 flex items-center justify-between">
 				<h3 class="text-2xl font-bold text-base-content">Delete Expense</h3>
-				<button class="btn btn-sm btn-circle btn-ghost" onclick={closeDeleteModal} aria-label="Close modal">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				<button
+					class="btn btn-circle btn-ghost btn-sm"
+					onclick={closeDeleteModal}
+					aria-label="Close modal"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
 					</svg>
 				</button>
 			</div>
 
 			<div class="mb-6">
-				<p class="text-base-content/80 mb-4">
+				<p class="mb-4 text-base-content/80">
 					Are you sure you want to delete this expense? This action cannot be undone.
 				</p>
 
-				<div class="bg-base-200 p-4 rounded-lg">
-					<div class="flex justify-between items-center">
+				<div class="rounded-lg bg-base-200 p-4">
+					<div class="flex items-center justify-between">
 						<div>
 							<h4 class="font-semibold text-base-content">{expenseToDelete.name}</h4>
 							<p class="text-sm text-base-content/70">{formatDate(expenseToDelete.date)}</p>
@@ -319,11 +389,22 @@
 					<input type="hidden" name="expenseId" value={expenseToDelete.id} />
 					<button class="btn btn-error" type="submit" disabled={isSubmitting}>
 						{#if isSubmitting}
-							<span class="loading loading-spinner loading-sm"></span>
+							<span class="loading loading-sm loading-spinner"></span>
 							Deleting...
 						{:else}
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-4 w-4"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+								/>
 							</svg>
 							Delete Expense
 						{/if}
@@ -336,13 +417,28 @@
 
 <!-- Edit Expense Modal -->
 {#if showEditModal && expenseToEdit}
-	<div class="modal modal-open">
+	<div class="modal-open modal">
 		<div class="modal-box">
-			<div class="flex justify-between items-center mb-4">
+			<div class="mb-4 flex items-center justify-between">
 				<h3 class="text-2xl font-bold text-base-content">Edit Expense</h3>
-				<button class="btn btn-sm btn-circle btn-ghost" onclick={closeEditModal} aria-label="Close modal">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				<button
+					class="btn btn-circle btn-ghost btn-sm"
+					onclick={closeEditModal}
+					aria-label="Close modal"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
 					</svg>
 				</button>
 			</div>
@@ -358,14 +454,16 @@
 						type="text"
 						id="edit-name"
 						name="name"
-						class="input input-bordered w-full"
+						class="input-bordered input w-full"
 						placeholder="e.g., Groceries, Gas, Coffee"
 						bind:value={formData.name}
 						required
 						disabled={isSubmitting}
 					/>
 					<div class="label">
-						<span class="label-text-alt text-base-content/60">Enter a descriptive name for this expense</span>
+						<span class="label-text-alt text-base-content/60"
+							>Enter a descriptive name for this expense</span
+						>
 					</div>
 				</div>
 
@@ -374,12 +472,15 @@
 						<span class="label-text font-semibold">Amount</span>
 					</label>
 					<div class="relative">
-						<span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/60 z-10">₴</span>
+						<span
+							class="absolute top-1/2 left-3 z-10 -translate-y-1/2 transform text-base-content/60"
+							>₴</span
+						>
 						<input
 							type="number"
 							id="edit-amount"
 							name="amount"
-							class="input input-bordered w-full pl-8"
+							class="input-bordered input w-full pl-8"
 							placeholder="0.00"
 							step="1"
 							min="0"
@@ -401,27 +502,45 @@
 						type="date"
 						id="edit-date"
 						name="date"
-						class="input input-bordered w-full"
+						class="input-bordered input w-full"
 						bind:value={formData.date}
 						required
 						disabled={isSubmitting}
 					/>
 					<div class="label">
-						<span class="label-text-alt text-base-content/60">Select the date when this expense occurred</span>
+						<span class="label-text-alt text-base-content/60"
+							>Select the date when this expense occurred</span
+						>
 					</div>
 				</div>
 
 				<div class="modal-action">
-					<button class="btn btn-ghost" type="button" onclick={closeEditModal} disabled={isSubmitting}>
+					<button
+						class="btn btn-ghost"
+						type="button"
+						onclick={closeEditModal}
+						disabled={isSubmitting}
+					>
 						Cancel
 					</button>
 					<button class="btn btn-primary" type="submit" disabled={isSubmitting}>
 						{#if isSubmitting}
-							<span class="loading loading-spinner loading-sm"></span>
+							<span class="loading loading-sm loading-spinner"></span>
 							Updating...
 						{:else}
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-4 w-4"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+								/>
 							</svg>
 							Update Expense
 						{/if}
@@ -434,31 +553,70 @@
 
 <!-- Add Multiple Expenses Modal -->
 {#if showModal}
-	<div class="modal modal-open">
+	<div class="modal-open modal">
 		<div class="modal-box max-w-4xl">
-			<div class="flex justify-between items-center mb-4">
+			<div class="mb-4 flex items-center justify-between">
 				<h3 class="text-2xl font-bold text-base-content">Add Multiple Expenses</h3>
-				<button class="btn btn-sm btn-circle btn-ghost" onclick={closeModal} aria-label="Close modal">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				<button
+					class="btn btn-circle btn-ghost btn-sm"
+					onclick={closeModal}
+					aria-label="Close modal"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
 					</svg>
 				</button>
 			</div>
 
 			<form use:enhance={handleSuccess} action="?/createMultipleExpenses" method="post">
 				<div class="mb-6">
-					<div class="flex justify-between items-center mb-4">
-						<p class="text-base-content/80">Add multiple expenses at once. You can add or remove rows as needed.</p>
+					<div class="mb-4 flex items-center justify-between">
+						<p class="text-base-content/80">
+							Add multiple expenses at once. You can add or remove rows as needed.
+						</p>
 						<div class="flex gap-2">
-							<button type="button" class="btn btn-sm btn-outline" onclick={addExpenseRow}>
-								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+							<button type="button" class="btn btn-outline btn-sm" onclick={addExpenseRow}>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M12 4v16m8-8H4"
+									/>
 								</svg>
 								Add Row
 							</button>
-							<button type="button" class="btn btn-sm btn-ghost" onclick={clearAllExpenses}>
-								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+							<button type="button" class="btn btn-ghost btn-sm" onclick={clearAllExpenses}>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+									/>
 								</svg>
 								Clear All
 							</button>
@@ -466,26 +624,37 @@
 					</div>
 
 					<!-- Expense rows -->
-					<div class="space-y-4 max-h-96 overflow-y-auto">
-						{#each multiExpenseData.expenses as expense, index}
+					<div class="max-h-96 space-y-4 overflow-y-auto">
+						{#each multiExpenseData.expenses as expense, index (expense.date)}
 							<div class="card bg-base-200 p-4">
-								<div class="flex items-center justify-between mb-3">
+								<div class="mb-3 flex items-center justify-between">
 									<h4 class="font-semibold text-base-content">Expense #{index + 1}</h4>
 									{#if multiExpenseData.expenses.length > 1}
 										<button
 											type="button"
-											class="btn btn-sm btn-ghost text-error"
+											class="btn text-error btn-ghost btn-sm"
 											onclick={() => removeExpenseRow(index)}
 										>
-											<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="h-4 w-4"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+												/>
 											</svg>
 											Remove
 										</button>
 									{/if}
 								</div>
 
-								<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+								<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 									<div class="form-control">
 										<label class="label" for="name-{index}">
 											<span class="label-text font-semibold">Name</span>
@@ -494,7 +663,7 @@
 											type="text"
 											id="name-{index}"
 											name="expenses[{index}][name]"
-											class="input input-bordered w-full"
+											class="input-bordered input w-full"
 											placeholder="e.g., Groceries, Gas"
 											bind:value={expense.name}
 											disabled={isSubmitting}
@@ -506,12 +675,15 @@
 											<span class="label-text font-semibold">Amount</span>
 										</label>
 										<div class="relative">
-											<span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/60 z-10">₴</span>
+											<span
+												class="absolute top-1/2 left-3 z-10 -translate-y-1/2 transform text-base-content/60"
+												>₴</span
+											>
 											<input
 												type="number"
 												id="amount-{index}"
 												name="expenses[{index}][amount]"
-												class="input input-bordered w-full pl-8"
+												class="input-bordered input w-full pl-8"
 												placeholder="0.00"
 												step="0.01"
 												min="0"
@@ -529,7 +701,7 @@
 											type="date"
 											id="date-{index}"
 											name="expenses[{index}][date]"
-											class="input input-bordered w-full"
+											class="input-bordered input w-full"
 											bind:value={expense.date}
 											disabled={isSubmitting}
 										/>
@@ -541,15 +713,17 @@
 
 					<!-- Total summary -->
 					{#if getTotalAmount() > 0}
-						<div class="mt-4 p-4 bg-primary/10 rounded-lg">
-							<div class="flex justify-between items-center">
+						<div class="mt-4 rounded-lg bg-primary/10 p-4">
+							<div class="flex items-center justify-between">
 								<span class="font-semibold text-base-content">Total Amount:</span>
 								<span class="text-lg font-bold text-primary">
 									{formatAmount(Math.round(getTotalAmount() * 100))}
 								</span>
 							</div>
-							<div class="text-sm text-base-content/70 mt-1">
-								{multiExpenseData.expenses.length} expense{multiExpenseData.expenses.length === 1 ? '' : 's'}
+							<div class="mt-1 text-sm text-base-content/70">
+								{multiExpenseData.expenses.length} expense{multiExpenseData.expenses.length === 1
+									? ''
+									: 's'}
 							</div>
 						</div>
 					{/if}
@@ -559,20 +733,44 @@
 					<button type="button" class="btn btn-ghost" onclick={closeModal} disabled={isSubmitting}>
 						Cancel
 					</button>
-					<button type="submit" class="btn btn-primary" disabled={isSubmitting || !hasValidExpenses()}>
+					<button
+						type="submit"
+						class="btn btn-primary"
+						disabled={isSubmitting || !hasValidExpenses()}
+					>
 						{#if isSubmitting}
-							<span class="loading loading-spinner loading-sm"></span>
+							<span class="loading loading-sm loading-spinner"></span>
 							Adding Expenses...
 						{:else}
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-5 w-5"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M12 4v16m8-8H4"
+								/>
 							</svg>
-							Add {multiExpenseData.expenses.length} Expense{multiExpenseData.expenses.length === 1 ? '' : 's'}
+							Add {multiExpenseData.expenses.length} Expense{multiExpenseData.expenses.length === 1
+								? ''
+								: 's'}
 						{/if}
 					</button>
 				</div>
 			</form>
 		</div>
-		<div class="modal-backdrop" onclick={closeModal} onkeydown={(e) => e.key === 'Escape' && closeModal()} role="button" tabindex="0" aria-label="Close modal"></div>
+		<div
+			class="modal-backdrop"
+			onclick={closeModal}
+			onkeydown={(e) => e.key === 'Escape' && closeModal()}
+			role="button"
+			tabindex="0"
+			aria-label="Close modal"
+		></div>
 	</div>
 {/if}
