@@ -38,13 +38,6 @@ jobs:
       - name: Build application
         run: pnpm run build
 
-      - name: List build output
-        run: |
-          echo "Checking .svelte-kit directory:"
-          ls -la .svelte-kit/ || echo "No .svelte-kit directory found"
-          echo "Checking .svelte-kit/cloudflare directory:"
-          ls -la .svelte-kit/cloudflare/ || echo "No .svelte-kit/cloudflare directory found"
-
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -67,6 +60,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
 
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install prod deps
+        run: pnpm install --frozen-lockfile --prod
+
       - name: Download build artifacts
         uses: actions/download-artifact@v5
         with:
@@ -74,19 +73,6 @@ jobs:
           path: ./.svelte-kit/
           include-hidden-files: true
           if-no-files-found: error
-
-      - name: Verify downloaded artifacts
-        run: |
-          echo "Checking downloaded .svelte-kit directory:"
-          ls -la .svelte-kit/ || echo "No .svelte-kit directory found"
-          echo "Checking .svelte-kit/cloudflare directory:"
-          ls -la .svelte-kit/cloudflare/ || echo "No .svelte-kit/cloudflare directory found"
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install prod deps
-        run: pnpm install --frozen-lockfile --prod
 
       - name: Install wrangler
         run: npm install -g wrangler
