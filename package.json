@@ -24,11 +24,8 @@
 		"@cloudflare/workers-types": "^4.20250906.0",
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
-		"@oslojs/crypto": "^1.0.1",
-		"@oslojs/encoding": "^1.1.0",
 		"@playwright/test": "^1.49.1",
 		"@sveltejs/adapter-cloudflare": "^7.2.3",
-		"@sveltejs/kit": "^2.22.0",
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
@@ -37,7 +34,6 @@
 		"@vitest/browser": "^3.2.3",
 		"daisyui": "^5.1.7",
 		"drizzle-kit": "^0.30.2",
-		"drizzle-orm": "^0.40.0",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^3.0.0",
@@ -59,6 +55,10 @@
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^0.10.4",
+		"@oslojs/crypto": "^1.0.1",
+		"@oslojs/encoding": "^1.1.0",
+		"@sveltejs/kit": "^2.37.1",
+		"drizzle-orm": "^0.44.5",
 		"nanoid": "^5.1.5"
 	}
 }
