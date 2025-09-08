@@ -44,7 +44,8 @@ export const categories = pgTable('categories', {
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id),
-	color: text('color').default('#000000')
+	color: text('color').default('#000000'),
+	textColor: text('text_color').default('#ffffff')
 });
 
 export const expensesCategoriesRelations = relations(expenses, ({ one }) => ({
@@ -59,6 +60,8 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
 }));
 
 export type Expenses = typeof expenses.$inferSelect;
+
+export type Categories = typeof categories.$inferSelect;
 
 export type Session = typeof session.$inferSelect;
 
