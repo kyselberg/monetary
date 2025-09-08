@@ -23,7 +23,8 @@ export const expenses = pgTable('expenses', {
 		.references(() => user.id),
 	name: text('name').notNull().default(''),
 	date: timestamp('date', { withTimezone: false, mode: 'date' }).notNull().defaultNow(),
-	amountCents: integer('amount_cents').notNull()
+	amountCents: integer('amount_cents').notNull(),
+	categoryId: text('category_id').references(() => categories.id)
 });
 
 export const expensesRelations = relations(expenses, ({ one }) => ({
@@ -34,6 +35,26 @@ export const expensesRelations = relations(expenses, ({ one }) => ({
 }));
 
 export const userRelations = relations(user, ({ many }) => ({
+	expenses: many(expenses)
+}));
+
+export const categories = pgTable('categories', {
+	id: text('id').primaryKey(),
+	name: text('name').notNull(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id),
+	color: text('color').default('#000000')
+});
+
+export const expensesCategoriesRelations = relations(expenses, ({ one }) => ({
+	category: one(categories, {
+		fields: [expenses.categoryId],
+		references: [categories.id]
+	})
+}));
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
 	expenses: many(expenses)
 }));
 

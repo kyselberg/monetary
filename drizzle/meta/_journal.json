@@ -15,6 +15,13 @@
       "when": 1757270674673,
       "tag": "0001_narrow_felicia_hardy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757319583606,
+      "tag": "0002_zippy_kree",
+      "breakpoints": true
     }
   ]
 }
