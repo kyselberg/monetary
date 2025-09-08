@@ -22,6 +22,13 @@
       "when": 1757319583606,
       "tag": "0002_zippy_kree",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1757320074793,
+      "tag": "0003_lonely_lord_hawal",
+      "breakpoints": true
     }
   ]
 }
