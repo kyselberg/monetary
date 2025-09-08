@@ -6,6 +6,7 @@
 
 	// Modal state
 	let showModal = $state(false);
+	let showCategoryModal = $state(false);
 	let showDeleteModal = $state(false);
 	let showEditModal = $state(false);
 	let isSubmitting = $state(false);
@@ -24,7 +25,8 @@
 		id: '',
 		name: '',
 		amount: '',
-		date: new Date().toISOString().split('T')[0] // Today's date in YYYY-MM-DD format
+		date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+		categoryId: ''
 	});
 
 	// Multi-expense form data
@@ -34,9 +36,17 @@
 				id: '',
 				name: '',
 				amount: '',
-				date: new Date().toISOString().split('T')[0]
+				date: new Date().toISOString().split('T')[0],
+				categoryId: ''
 			}
 		]
+	});
+
+	// Create category form data
+	let categoryForm = $state({
+		name: '',
+		color: '#000000',
+		textColor: '#ffffff'
 	});
 
 	// Format amount from cents to UAH
@@ -56,6 +66,11 @@
 		}).format(new Date(date));
 	}
 
+	function getCategoryById(categoryId: string | null | undefined) {
+		if (!categoryId) return null;
+		return data.categories.find((c) => c.id === categoryId) ?? null;
+	}
+
 	// Open modal
 	function openModal() {
 		showModal = true;
@@ -64,7 +79,8 @@
 			id: nanoid(),
 			name: '',
 			amount: '',
-			date: new Date().toISOString().split('T')[0]
+			date: new Date().toISOString().split('T')[0],
+			categoryId: ''
 		};
 		// Reset multi-expense form
 		multiExpenseData = {
@@ -73,7 +89,8 @@
 					id: nanoid(),
 					name: '',
 					amount: '',
-					date: new Date().toISOString().split('T')[0]
+					date: new Date().toISOString().split('T')[0],
+					categoryId: ''
 				}
 			]
 		};
@@ -84,10 +101,23 @@
 		showModal = false;
 	}
 
+	function openCategoryModal() {
+		showCategoryModal = true;
+		categoryForm = { name: '', color: '#000000', textColor: '#ffffff' };
+	}
+
+	function closeCategoryModal() {
+		showCategoryModal = false;
+	}
+
 	// Handle form submission success
 	function handleSuccess() {
 		closeModal();
 		// The page will automatically refresh due to the form submission
+	}
+
+	function handleCategorySuccess() {
+		closeCategoryModal();
 	}
 
 	// Open delete confirmation modal
@@ -116,7 +146,8 @@
 			id: expense.id,
 			name: expense.name,
 			amount: (expense.amountCents / 100).toFixed(2),
-			date: expense.date.toISOString().split('T')[0]
+			date: expense.date.toISOString().split('T')[0],
+			categoryId: (expense as unknown as { categoryId?: string | null }).categoryId ?? ''
 		};
 		showEditModal = true;
 	}
@@ -130,7 +161,8 @@
 			id: nanoid(),
 			name: '',
 			amount: '',
-			date: new Date().toISOString().split('T')[0]
+			date: new Date().toISOString().split('T')[0],
+			categoryId: ''
 		};
 	}
 
@@ -146,7 +178,8 @@
 			id: nanoid(),
 			name: '',
 			amount: '',
-			date: new Date().toISOString().split('T')[0]
+			date: new Date().toISOString().split('T')[0],
+			categoryId: ''
 		});
 	}
 
@@ -162,7 +195,8 @@
 				id: nanoid(),
 				name: '',
 				amount: '',
-				date: new Date().toISOString().split('T')[0]
+				date: new Date().toISOString().split('T')[0],
+				categoryId: ''
 			}
 		];
 	}
@@ -190,18 +224,26 @@
 <div class="container mx-auto px-4 py-8">
 	<div class="mb-8 flex items-center justify-between">
 		<h1 class="text-3xl font-bold text-base-content">Expenses</h1>
-		<button class="btn btn-primary" onclick={openModal}>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				class="h-5 w-5"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke="currentColor"
-			>
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-			</svg>
-			Add Expenses
-		</button>
+		<div class="flex gap-2">
+			<button class="btn btn-outline" onclick={openCategoryModal}>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h6l2 2h10v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+				</svg>
+				Create Category
+			</button>
+			<button class="btn btn-primary" onclick={openModal}>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-5 w-5"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+				</svg>
+				Add Expenses
+			</button>
+		</div>
 	</div>
 
 	{#if data.expenses && data.expenses.length > 0}
@@ -232,6 +274,7 @@
 								<th class="font-semibold text-base-content">Name</th>
 								<th class="font-semibold text-base-content">Date</th>
 								<th class="font-semibold text-base-content">Amount</th>
+								<th class="font-semibold text-base-content">Category</th>
 								<th class="font-semibold text-base-content">Actions</th>
 							</tr>
 						</thead>
@@ -248,6 +291,20 @@
 										<span class="badge badge-outline badge-lg">
 											{formatAmount(expense.amountCents)}
 										</span>
+									</td>
+									<td class="font-medium text-base-content">
+										{#if getCategoryById(expense.categoryId)}
+											{#key expense.categoryId}
+												<span
+													class="badge badge-lg"
+													style="background-color: {getCategoryById(expense.categoryId)?.color}; color: {getCategoryById(expense.categoryId)?.textColor}"
+												>
+													{getCategoryById(expense.categoryId)?.name}
+												</span>
+											{/key}
+										{:else}
+											<span class="badge badge-ghost badge-lg">Uncategorized</span>
+										{/if}
 									</td>
 									<td>
 										<div class="flex gap-2">
@@ -464,7 +521,7 @@
 						id="edit-name"
 						name="name"
 						class="input-bordered input w-full"
-						placeholder="e.g., Groceries, Gas, Coffee"
+						placeholder="e.g., Groceries, Gas"
 						bind:value={formData.name}
 						required
 						disabled={isSubmitting}
@@ -521,6 +578,25 @@
 							>Select the date when this expense occurred</span
 						>
 					</div>
+				</div>
+
+				<!-- Category selector -->
+				<div class="form-control mb-6">
+					<label class="label" for="edit-category">
+						<span class="label-text font-semibold">Category</span>
+					</label>
+					<select
+						id="edit-category"
+						name="categoryId"
+						class="select-bordered select w-full"
+						bind:value={formData.categoryId}
+						disabled={isSubmitting}
+					>
+						<option value="">Uncategorized</option>
+						{#each data.categories as category}
+							<option value={category.id}>{category.name}</option>
+						{/each}
+					</select>
 				</div>
 
 				<div class="modal-action">
@@ -663,7 +739,7 @@
 									{/if}
 								</div>
 
-								<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+								<div class="grid grid-cols-1 gap-4 md:grid-cols-4">
 									<div class="form-control">
 										<label class="label" for="name-{index}">
 											<span class="label-text font-semibold">Name</span>
@@ -714,6 +790,24 @@
 											bind:value={expense.date}
 											disabled={isSubmitting}
 										/>
+									</div>
+
+									<div class="form-control">
+										<label class="label" for="category-{index}">
+											<span class="label-text font-semibold">Category</span>
+										</label>
+										<select
+											id="category-{index}"
+											name="expenses[{index}][categoryId]"
+											class="select-bordered select w-full"
+											bind:value={expense.categoryId}
+											disabled={isSubmitting}
+										>
+											<option value="">Uncategorized</option>
+											{#each data.categories as category}
+												<option value={category.id}>{category.name}</option>
+											{/each}
+										</select>
 									</div>
 								</div>
 							</div>
@@ -781,5 +875,87 @@
 			tabindex="0"
 			aria-label="Close modal"
 		></div>
+	</div>
+{/if}
+
+<!-- Create Category Modal -->
+{#if showCategoryModal}
+	<div class="modal-open modal">
+		<div class="modal-box">
+			<div class="mb-4 flex items-center justify-between">
+				<h3 class="text-2xl font-bold text-base-content">Create Category</h3>
+				<button class="btn btn-circle btn-ghost btn-sm" onclick={closeCategoryModal} aria-label="Close modal">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</div>
+
+			<form use:enhance={handleCategorySuccess} action="?/createCategory" method="post">
+				<div class="form-control mb-4">
+					<label class="label" for="category-name">
+						<span class="label-text font-semibold">Name</span>
+					</label>
+					<input
+						type="text"
+						id="category-name"
+						name="name"
+						class="input-bordered input w-full"
+						placeholder="e.g., Groceries, Transport"
+						bind:value={categoryForm.name}
+						required
+						disabled={isSubmitting}
+					/>
+				</div>
+
+				<div class="form-control mb-4">
+					<label class="label" for="category-color">
+						<span class="label-text font-semibold">Color</span>
+					</label>
+					<input
+						type="color"
+						id="category-color"
+						name="color"
+						class="input w-24 p-0"
+						bind:value={categoryForm.color}
+						required
+						disabled={isSubmitting}
+					/>
+				</div>
+
+				<div class="form-control mb-6">
+					<label class="label" for="category-text-color">
+						<span class="label-text font-semibold">Text Color</span>
+					</label>
+					<input
+						type="color"
+						id="category-text-color"
+						name="textColor"
+						class="input w-24 p-0"
+						bind:value={categoryForm.textColor}
+						required
+						disabled={isSubmitting}
+					/>
+				</div>
+
+				<div class="modal-action">
+					<button type="button" class="btn btn-ghost" onclick={closeCategoryModal} disabled={isSubmitting}>
+						Cancel
+					</button>
+					<button class="btn btn-primary" type="submit" disabled={isSubmitting || !categoryForm.name.trim()}>
+						{#if isSubmitting}
+							<span class="loading loading-sm loading-spinner"></span>
+							Creating...
+						{:else}
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h6l2 2h10v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+							</svg>
+							Create Category
+						{/if}
+					</button>
+				</div>
+			</form>
+		</div>
+		<div class="modal-backdrop" onclick={closeCategoryModal} onkeydown={(e) => e.key === 'Escape' && closeCategoryModal()} role="button" tabindex="0" aria-label="Close modal"></div>
 	</div>
 {/if}
