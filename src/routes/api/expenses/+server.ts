@@ -28,7 +28,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			userId: user.id,
 			name,
 			amountCents,
-			date: new Date(date)
+			date: new Date(date),
+			categoryId: null
 		};
 
 		await createExpense(expense);
