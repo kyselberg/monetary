@@ -10,8 +10,10 @@ import {
 	createExpense,
 	createMultipleExpenses,
 	deleteExpense,
+	getBiggestCategories,
 	getExpenses,
 	getExpensesSummary,
+	getMostFrequentCategories,
 	updateExpense
 } from '$lib/server/expenses';
 import { fail } from '@sveltejs/kit';
@@ -23,11 +25,15 @@ export const load: PageServerLoad = async () => {
 	const expenses = await getExpenses(user.id);
 	const summary = await getExpensesSummary(user.id);
 	const categories = await getCategories(user.id);
+	const mostFrequentCategories = await getMostFrequentCategories(user.id);
+	const biggestCategories = await getBiggestCategories(user.id);
 
 	return {
 		expenses,
 		summary,
-		categories
+		categories,
+		mostFrequentCategories,
+		biggestCategories
 	};
 };
 

@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 
 export async function createExpense(expense: table.Expenses): Promise<void> {
 	await db.insert(table.expenses).values(expense);
@@ -37,4 +37,28 @@ export async function getExpensesSummary(
 	const total = expenses.reduce((sum, expense) => sum + expense.amountCents, 0);
 	const average = total / expenses.length;
 	return { total, average };
+}
+
+export async function getMostFrequentCategories(
+	userId: string
+): Promise<{ categoryId: string | null; count: number }[]> {
+	const result = await db
+		.select({ categoryId: table.expenses.categoryId, count: sql<number>`count(*)` })
+		.from(table.expenses)
+		.where(eq(table.expenses.userId, userId))
+		.groupBy(table.expenses.categoryId)
+		.orderBy(desc(sql<number>`count`));
+
+	return result;
+}
+
+export async function getBiggestCategories(
+	userId: string
+): Promise<{ categoryId: string | null; amount: number }[]> {
+	return await db
+		.select({ categoryId: table.expenses.categoryId, amount: sql<number>`sum(amount_cents)` })
+		.from(table.expenses)
+		.where(eq(table.expenses.userId, userId))
+		.groupBy(table.expenses.categoryId)
+		.orderBy(desc(sql<number>`sum(amount_cents)`));
 }
