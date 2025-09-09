@@ -1,48 +1,41 @@
 import { requireLogin } from '$lib';
-import { createExpense } from '$lib/server/expenses';
+import { createMultipleExpenses } from '$lib/server/expenses';
+import { json } from '@sveltejs/kit';
 import { nanoid } from 'nanoid';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const user = requireLogin();
+	const data = await request.json();
+
+	const { expenses } = data;
+
+	if (!expenses || !Array.isArray(expenses) || expenses.length === 0) {
+		return json({ error: 'No expenses provided' }, { status: 400 });
+	}
 
 	try {
-		const { amountCents, date, name } = await request.json();
+		// Transform the expenses data
+		const transformedExpenses = expenses
+			.filter((expense) => expense.name && expense.amount && parseFloat(expense.amount) > 0)
+			.map((expense) => ({
+				id: nanoid(),
+				userId: user.id,
+				name: expense.name.trim(),
+				amountCents: Math.round(parseFloat(expense.amount) * 100),
+				date: new Date(expense.date),
+				categoryId: expense.categoryId || null
+			}));
 
-		if (!amountCents || !date || !name) {
-			return new Response(JSON.stringify({ error: 'Missing required fields' }), {
-				status: 400,
-				headers: { 'Content-Type': 'application/json' }
-			});
+		if (transformedExpenses.length === 0) {
+			return json({ error: 'No valid expenses provided' }, { status: 400 });
 		}
 
-		if (typeof amountCents !== 'number' || amountCents <= 0) {
-			return new Response(JSON.stringify({ error: 'Invalid amount' }), {
-				status: 400,
-				headers: { 'Content-Type': 'application/json' }
-			});
-		}
+		await createMultipleExpenses(transformedExpenses);
 
-		const expense = {
-			id: nanoid(),
-			userId: user.id,
-			name,
-			amountCents,
-			date: new Date(date),
-			categoryId: null
-		};
-
-		await createExpense(expense);
-
-		return new Response(JSON.stringify({ success: true }), {
-			status: 201,
-			headers: { 'Content-Type': 'application/json' }
-		});
+		return json({ success: true });
 	} catch (error) {
-		console.error('Error creating expense:', error);
-		return new Response(JSON.stringify({ error: 'Internal server error' }), {
-			status: 500,
-			headers: { 'Content-Type': 'application/json' }
-		});
+		console.error('Error creating expenses:', error);
+		return json({ error: 'Failed to create expenses' }, { status: 500 });
 	}
 };
