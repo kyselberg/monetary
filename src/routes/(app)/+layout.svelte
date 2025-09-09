@@ -2,10 +2,11 @@
 	import { goto } from '$app/navigation';
 	import favicon from '$lib/assets/favicon.svg';
 	import FloatingActionButton from '$lib/components/FloatingActionButton.svelte';
+	import type { Snippet } from 'svelte';
 	import '../../app.css';
 	import type { PageData } from './$types';
 
-	let { children, data }: { children: unknown; data: PageData } = $props();
+	let { children, data }: { children: Snippet; data: PageData } = $props();
 </script>
 
 <svelte:head>
