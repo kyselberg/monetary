@@ -10,12 +10,6 @@
 		goto(`/categories/${categoryId}`);
 	}
 
-	function handleMenuClick(event: Event, categoryId: string) {
-		event.stopPropagation();
-		// TODO: Implement menu functionality
-		console.log('Menu clicked for category:', categoryId);
-	}
-
 	// Note: Category modal functions are now handled by the layout component
 
 	// Note: Modals are now handled by the layout component

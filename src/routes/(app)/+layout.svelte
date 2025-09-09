@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import favicon from '$lib/assets/favicon.svg';
 	import FloatingActionButton from '$lib/components/FloatingActionButton.svelte';
 	import '../../app.css';
 	import type { PageData } from './$types';
 
-	let { children, data }: { children: any; data: PageData } = $props();
+	let { children, data }: { children: unknown; data: PageData } = $props();
 </script>
 
 <svelte:head>
@@ -35,7 +36,7 @@
 				class="dropdown-content menu z-[1] mt-3 w-52 menu-sm rounded-box bg-base-100 p-2 shadow"
 			>
 				<li>
-					<a href="/" class="flex items-center gap-2">
+					<button type="button" onclick={() => goto('/')} class="flex items-center gap-2">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							class="h-4 w-4"
@@ -57,10 +58,10 @@
 							/>
 						</svg>
 						Home
-					</a>
+					</button>
 				</li>
 				<li>
-					<a href="/categories" class="flex items-center gap-2">
+					<button type="button" onclick={() => goto('/categories')} class="flex items-center gap-2">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							class="h-4 w-4"
@@ -76,11 +77,11 @@
 							/>
 						</svg>
 						Categories
-					</a>
+					</button>
 				</li>
 			</ul>
 		</div>
-		<a href="/" class="btn text-xl font-bold btn-ghost">
+		<button type="button" onclick={() => goto('/')} class="btn text-xl font-bold btn-ghost">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				class="mr-2 h-6 w-6"
@@ -96,13 +97,17 @@
 				/>
 			</svg>
 			Expenses
-		</a>
+		</button>
 	</div>
 
 	<div class="navbar-center hidden lg:flex">
 		<ul class="menu menu-horizontal px-1">
 			<li>
-				<a href="/" class="btn flex items-center gap-2 btn-ghost">
+				<button
+					type="button"
+					onclick={() => goto('/')}
+					class="btn flex items-center gap-2 btn-ghost"
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						class="h-4 w-4"
@@ -124,10 +129,14 @@
 						/>
 					</svg>
 					Home
-				</a>
+				</button>
 			</li>
 			<li>
-				<a href="/categories" class="btn flex items-center gap-2 btn-ghost">
+				<button
+					type="button"
+					onclick={() => goto('/categories')}
+					class="btn flex items-center gap-2 btn-ghost"
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						class="h-4 w-4"
@@ -143,7 +152,7 @@
 						/>
 					</svg>
 					Categories
-				</a>
+				</button>
 			</li>
 		</ul>
 	</div>

@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
-	let { data, form }: { data: PageData; form: any } = $props();
+	let {
+		data,
+		form
+	}: { data: PageData; form: { success?: boolean; error?: string; message?: string } | undefined } =
+		$props();
 
 	let showDeleteModal = $state(false);
 
@@ -45,7 +50,7 @@
 <div class="container mx-auto max-w-2xl p-6">
 	<div class="mb-6">
 		<div class="mb-4 flex items-center gap-4">
-			<a href="/categories" class="btn btn-ghost btn-sm">
+			<button type="button" onclick={() => goto('/categories')} class="btn btn-ghost btn-sm">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					class="h-4 w-4"
@@ -61,7 +66,7 @@
 					/>
 				</svg>
 				Back to categories
-			</a>
+			</button>
 		</div>
 		<h1 class="text-3xl font-bold text-base-content">Edit Category</h1>
 		<p class="mt-2 text-base-content/70">Update your category details</p>
