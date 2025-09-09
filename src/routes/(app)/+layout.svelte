@@ -4,7 +4,7 @@
 	import '../../app.css';
 	import type { PageData } from './$types';
 
-	let { children, data }: { children: unknown; data: PageData } = $props();
+	let { children, data }: { children: any; data: PageData } = $props();
 </script>
 
 <svelte:head>
