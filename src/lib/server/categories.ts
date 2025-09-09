@@ -1,6 +1,7 @@
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
+import { getExpensesByCategory } from './expenses';
 
 export async function createCategory(category: table.Categories): Promise<void> {
 	await db.insert(table.categories).values(category);
@@ -28,5 +29,9 @@ export async function updateCategory(
 }
 
 export async function deleteCategory(id: string): Promise<void> {
+	const expenses = await getExpensesByCategory(id);
+	if (expenses.length > 0) {
+		throw new Error('Category has associated expenses');
+	}
 	await db.delete(table.categories).where(eq(table.categories.id, id));
 }

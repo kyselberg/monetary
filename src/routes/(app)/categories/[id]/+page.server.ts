@@ -1,5 +1,6 @@
 import { requireLogin } from '$lib';
 import { deleteCategory, getCategory, updateCategory } from '$lib/server/categories';
+import { getExpensesByCategory } from '$lib/server/expenses';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -11,8 +12,13 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw redirect(302, '/categories');
 	}
 
+	// Get associated expenses count
+	const expenses = await getExpensesByCategory(category.id);
+	const expenseCount = expenses.length;
+
 	return {
-		category
+		category,
+		expenseCount
 	};
 };
 
@@ -58,7 +64,23 @@ export const actions: Actions = {
 			return fail(404, { message: 'Category not found' });
 		}
 
-		await deleteCategory(categoryId);
+		try {
+			await deleteCategory(categoryId);
+		} catch (error) {
+			// Check if the error is about associated expenses
+			if (error instanceof Error && error.message === 'Category has associated expenses') {
+				return fail(409, {
+					message:
+						'Cannot delete category with associated expenses. Please delete or reassign all expenses in this category first.',
+					error: 'HAS_EXPENSES'
+				});
+			}
+
+			return fail(500, {
+				message: 'Failed to delete category',
+				error: error instanceof Error ? error.message : 'Unknown error'
+			});
+		}
 
 		throw redirect(302, '/categories');
 	}

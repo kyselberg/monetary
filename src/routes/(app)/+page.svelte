@@ -113,13 +113,6 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8">
-	<div class="mb-8 flex items-center justify-between">
-		<h1 class="text-3xl font-bold text-base-content">Expenses</h1>
-		<div class="flex gap-2">
-			<p class="text-base-content/70 text-sm">Use the floating button to add expenses or categories</p>
-		</div>
-	</div>
-
 	{#if data.expenses && data.expenses.length > 0}
 		<!-- Summary Card -->
 		<div class="stats mb-6 shadow">

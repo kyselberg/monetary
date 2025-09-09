@@ -1,6 +1,6 @@
 import { requireLogin } from '$lib';
 import * as auth from '$lib/server/auth';
-import { deleteCategory, getCategories, updateCategory } from '$lib/server/categories';
+import { getCategories, updateCategory } from '$lib/server/categories';
 import type * as table from '$lib/server/db/schema';
 import {
 	createExpense,
@@ -146,28 +146,6 @@ export const actions: Actions = {
 
 		await updateCategory(categoryId, { name, color, textColor });
 
-		return {
-			success: true
-		};
-	},
-	deleteCategory: async (event) => {
-		const user = requireLogin();
-		const data = await event.request.formData();
-
-		const categoryId = data.get('categoryId')?.toString();
-
-		if (!categoryId) {
-			return fail(400, { message: 'Missing category ID' });
-		}
-
-		const categories = await getCategories(user.id);
-		const selectedCategory = categories.find((category) => category.id === categoryId);
-
-		if (selectedCategory?.userId !== user.id) {
-			return fail(400, { message: 'Category not found' });
-		}
-
-		await deleteCategory(categoryId);
 		return {
 			success: true
 		};

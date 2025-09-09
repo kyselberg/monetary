@@ -19,6 +19,14 @@ export async function getExpenses(userId: string): Promise<table.Expenses[]> {
 		.orderBy(desc(table.expenses.date));
 }
 
+export async function getExpensesByCategory(categoryId: string): Promise<table.Expenses[]> {
+	return await db
+		.select()
+		.from(table.expenses)
+		.where(eq(table.expenses.categoryId, categoryId))
+		.orderBy(desc(table.expenses.date));
+}
+
 export async function updateExpense(
 	id: string,
 	updates: Partial<Omit<table.Expenses, 'id' | 'userId'>>

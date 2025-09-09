@@ -70,7 +70,18 @@
 			<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
 			</svg>
-			<span>{form.message || 'An error occurred'}</span>
+			<div>
+				<span class="font-semibold">{form.message || 'An error occurred'}</span>
+				{#if form.error === 'HAS_EXPENSES'}
+					<div class="text-sm mt-1">
+						To delete this category, you need to either:
+						<ul class="list-disc list-inside mt-2 space-y-1">
+							<li>Delete all expenses in this category first</li>
+							<li>Reassign expenses to other categories</li>
+						</ul>
+					</div>
+				{/if}
+			</div>
 		</div>
 	{/if}
 
@@ -192,22 +203,40 @@
 	<div class="modal modal-open">
 		<div class="modal-box">
 			<h3 class="font-bold text-lg text-error">Delete Category</h3>
-			<p class="py-4">
-				Are you sure you want to delete the category "<strong>{data.category.name}</strong>"?
-				This action cannot be undone and will remove all associated expenses from this category.
-			</p>
-			<div class="modal-action">
-				<form method="POST" action="?/deleteCategory" use:enhance>
-					<input type="hidden" name="categoryId" value={data.category.id} />
-					<button type="submit" class="btn btn-error">
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-						</svg>
-						Yes, Delete
-					</button>
-				</form>
-				<button class="btn btn-ghost" onclick={cancelDelete}>Cancel</button>
-			</div>
+			{#if data.expenseCount > 0}
+				<div class="alert alert-warning mb-4">
+					<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+					</svg>
+					<div>
+						<div class="font-semibold">Cannot Delete Category</div>
+						<div class="text-sm">
+							This category has <strong>{data.expenseCount}</strong> associated expense{data.expenseCount === 1 ? '' : 's'}.
+							You must delete or reassign all expenses before deleting this category.
+						</div>
+					</div>
+				</div>
+				<div class="modal-action">
+					<button class="btn btn-ghost" onclick={cancelDelete}>Close</button>
+				</div>
+			{:else}
+				<p class="py-4">
+					Are you sure you want to delete the category "<strong>{data.category.name}</strong>"?
+					This action cannot be undone.
+				</p>
+				<div class="modal-action">
+					<form method="POST" action="?/deleteCategory" use:enhance>
+						<input type="hidden" name="categoryId" value={data.category.id} />
+						<button type="submit" class="btn btn-error">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+							</svg>
+							Yes, Delete
+						</button>
+					</form>
+					<button class="btn btn-ghost" onclick={cancelDelete}>Cancel</button>
+				</div>
+			{/if}
 		</div>
 	</div>
 {/if}

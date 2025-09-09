@@ -22,10 +22,6 @@
 </script>
 
 <div class="container mx-auto p-6">
-	<div class="mb-6">
-		<h1 class="text-3xl font-bold text-base-content">Categories</h1>
-		<p class="text-base-content/70 mt-2">Manage your expense categories</p>
-	</div>
 
 	{#if data.categories.length === 0}
 		<div class="text-center py-12">
