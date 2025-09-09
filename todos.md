@@ -1,2 +1,55 @@
-[] - add categories
-[] - add date range filters and save it in local storage
+[] - edit categories
+[] - show percents of all categories
+
+[] - autofocus of expense name
+[] - hot key for adding the expense
+[] - hit enter and log the expenses
+
+[] - додати вигляд всіх трат по категорії
+[] - при введені назви додати автозаповнення відштовхуючись від раніше введених
+
+[] - бюджет по категоріям
+[] - ? хто зробив трату
+[] -
+
+Δ місяць-до-місяця (MoM) по total і по топ-категоріях.
+
+Прогноз кінця місяця (EOM forecast): поточний burn-rate × залишок днів.
+
+Концентрація витрат: частка топ-3 категорій (чи не “з’їдає” все оренда/транспорт?).
+
+Виявлення підписок/повторень: однаковий або ±5% amount + схожий name щомісячно.
+
+Сплески/аномалії: витрата > P90/P95 цього діапазону або “в 2× вище середнього за категорією”.
+
+Денний/тижневий burn-rate + найвитратніші дні тижня.
+
+“What-if” підказки: “скоротивши кафе на 20%, заощадиш X/міс”.
+
+Total spent за обраний період.
+
+Average / Median per transaction (медіана часто корисніша проти великих платежів).
+
+Transactions count (активність).
+
+Category share (%) = сума категорії / total.
+
+Most frequent category (за кількістю транзакцій) vs biggest category (за сумою).
+
+Top-3 concentration = сума топ-3 категорій / total.
+
+MoM Δ%: (поточний місяць − попередній) / попередній.
+
+Weekly pattern: heatmap “день тижня × сума/кількість”.
+
+Daily burn-rate: total / #days у періоді; rolling-7 для тренду.
+
+EOM forecast: (spend_to_date / day_of_month) × days_in_month.
+
+Anomaly flag: транзакції > P95 по категорії або > 3σ від середнього.
+
+“People” інсайт (якщо Ліза/Ілля поки категоріями): частка “Ліза” vs “Ілля”, MoM для кожної.
+
+Subscriptions rough: знайти транзакції з однаковим Name або близькою сумою на схожих датах 2–3 місяці поспіль.
+
+Tag(s): 1–2 коротких (кава/таксі) — дають сегментацію без росту категорій.
