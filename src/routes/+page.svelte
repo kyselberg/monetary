@@ -273,11 +273,38 @@
 				<div class="stat-desc">{data.expenses.length} transactions</div>
 			</div>
 			<div class="stat">
-				<div class="stat-title">Average</div>
+				<div class="stat-title">Most Frequent</div>
 				<div class="stat-value text-secondary">
-					{formatAmount(data.summary.average)}
+					{#if data.mostFrequentCategories && data.mostFrequentCategories.length > 0}
+						{getCategoryById(data.mostFrequentCategories[0].categoryId)?.name || 'Uncategorized'}
+					{:else}
+						-
+					{/if}
 				</div>
-				<div class="stat-desc">per transaction</div>
+				<div class="stat-desc">
+					{#if data.mostFrequentCategories && data.mostFrequentCategories.length > 0}
+						{data.mostFrequentCategories[0].count} transactions
+					{:else}
+						0 transactions
+					{/if}
+				</div>
+			</div>
+			<div class="stat">
+				<div class="stat-title">Biggest Category</div>
+				<div class="stat-value text-accent">
+					{#if data.biggestCategories && data.biggestCategories.length > 0}
+						{getCategoryById(data.biggestCategories[0].categoryId)?.name || 'Uncategorized'}
+					{:else}
+						-
+					{/if}
+				</div>
+				<div class="stat-desc">
+					{#if data.biggestCategories && data.biggestCategories.length > 0}
+						{formatAmount(data.biggestCategories[0].amount)}
+					{:else}
+						{formatAmount(0)}
+					{/if}
+				</div>
 			</div>
 		</div>
 
