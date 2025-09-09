@@ -11,14 +11,6 @@
 	let showCategoryModal = $state(false);
 	let isSubmitting = $state(false);
 
-	let formData = $state({
-		id: '',
-		name: '',
-		amount: '',
-		date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
-		categoryId: ''
-	});
-
 	let multiExpenseData = $state({
 		expenses: [
 			{
@@ -58,13 +50,6 @@
 
 	function openModal() {
 		showModal = true;
-		formData = {
-			id: nanoid(),
-			name: '',
-			amount: '',
-			date: new Date().toISOString().split('T')[0],
-			categoryId: ''
-		};
 		multiExpenseData = {
 			expenses: [
 				{
@@ -136,8 +121,10 @@
 		isSubmitting = true;
 		try {
 			const expenses = multiExpenseData.expenses
-				.filter(expense => expense.name.trim() && expense.amount && parseFloat(expense.amount) > 0)
-				.map(expense => ({
+				.filter(
+					(expense) => expense.name.trim() && expense.amount && parseFloat(expense.amount) > 0
+				)
+				.map((expense) => ({
 					name: expense.name.trim(),
 					amount: parseFloat(expense.amount),
 					date: expense.date,
@@ -226,13 +213,15 @@
 	}
 </script>
 
-<div class="fixed bottom-6 right-6 z-50" use:clickOutside>
+<div class="fixed right-6 bottom-6 z-50" use:clickOutside>
 	<div class="relative" bind:this={popoverRef}>
 		{#if showPopover}
-			<div class="absolute bottom-16 right-0 mb-2 w-48 rounded-lg bg-base-100 shadow-xl border border-base-300 p-2">
+			<div
+				class="absolute right-0 bottom-16 mb-2 w-48 rounded-lg border border-base-300 bg-base-100 p-2 shadow-xl"
+			>
 				<div class="space-y-1">
 					<button
-						class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left hover:bg-base-200 transition-colors"
+						class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-base-200"
 						onclick={handleAddExpense}
 					>
 						<svg
@@ -252,7 +241,7 @@
 						<span class="font-medium text-base-content">Add Expense</span>
 					</button>
 					<button
-						class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left hover:bg-base-200 transition-colors"
+						class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-base-200"
 						onclick={handleAddCategory}
 					>
 						<svg
@@ -277,7 +266,7 @@
 
 		<!-- Floating Action Button -->
 		<button
-			class="btn btn-circle btn-primary btn-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+			class="btn btn-circle shadow-lg transition-all duration-200 btn-lg btn-primary hover:scale-105 hover:shadow-xl"
 			onclick={togglePopover}
 			aria-label="Add new item"
 		>
@@ -288,12 +277,7 @@
 				viewBox="0 0 24 24"
 				stroke="currentColor"
 			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M12 4v16m8-8H4"
-				/>
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 			</svg>
 		</button>
 	</div>
@@ -588,7 +572,7 @@
 				</label>
 				<textarea
 					id="category-description"
-					class="textarea textarea-bordered w-full"
+					class="textarea-bordered textarea w-full"
 					placeholder="Describe what this category is for..."
 					bind:value={categoryForm.description}
 					required

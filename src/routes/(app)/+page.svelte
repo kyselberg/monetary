@@ -271,7 +271,9 @@
 					<p class="mb-6 text-base-content/70">
 						Start tracking your expenses by adding your first transaction.
 					</p>
-					<p class="text-base-content/70">Use the floating button in the bottom-right corner to add your first expenses</p>
+					<p class="text-base-content/70">
+						Use the floating button in the bottom-right corner to add your first expenses
+					</p>
 				</div>
 			</div>
 		</div>

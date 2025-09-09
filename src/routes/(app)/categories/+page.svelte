@@ -22,18 +22,17 @@
 </script>
 
 <div class="container mx-auto p-6">
-
 	{#if data.categories.length === 0}
-		<div class="text-center py-12">
-			<div class="text-6xl mb-4">📁</div>
-			<h3 class="text-xl font-semibold text-base-content mb-2">No categories yet</h3>
+		<div class="py-12 text-center">
+			<div class="mb-4 text-6xl">📁</div>
+			<h3 class="mb-2 text-xl font-semibold text-base-content">No categories yet</h3>
 			<p class="text-base-content/70">Create your first category to get started</p>
 		</div>
 	{:else}
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{#each data.categories as category (category.id)}
 				<div
-					class="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow cursor-pointer group"
+					class="group card cursor-pointer bg-base-100 shadow-lg transition-shadow hover:shadow-xl"
 					style="background-color: {category.color}; color: {category.textColor};"
 					onclick={() => handleCategoryClick(category.id)}
 					role="button"
@@ -41,13 +40,14 @@
 					onkeydown={(e) => e.key === 'Enter' && handleCategoryClick(category.id)}
 				>
 					<div class="card-body p-6">
-						<div class="flex justify-between items-start mb-3">
-							<h2 class="card-title text-xl font-bold truncate flex-1 mr-2">
+						<div class="mb-3 flex items-start justify-between">
+							<h2 class="mr-2 card-title flex-1 truncate text-xl font-bold">
 								{category.name}
 							</h2>
 						</div>
-						<p class="text-sm opacity-80 leading-relaxed">
-							{category.description || `No description provided for ${category.name.toLowerCase()} category`}
+						<p class="text-sm leading-relaxed opacity-80">
+							{category.description ||
+								`No description provided for ${category.name.toLowerCase()} category`}
 						</p>
 					</div>
 				</div>
@@ -55,6 +55,8 @@
 		</div>
 	{/if}
 </div>
+
+<!-- Modals are now handled by the layout component -->
 
 <style>
 	.card {
@@ -71,5 +73,3 @@
 		outline-offset: 2px;
 	}
 </style>
-
-<!-- Modals are now handled by the layout component -->
