@@ -1,15 +1,9 @@
 import { requireLogin } from '$lib';
 import * as auth from '$lib/server/auth';
-import {
-	createCategory,
-	deleteCategory,
-	getCategories,
-	updateCategory
-} from '$lib/server/categories';
+import { deleteCategory, getCategories, updateCategory } from '$lib/server/categories';
 import type * as table from '$lib/server/db/schema';
 import {
 	createExpense,
-	createMultipleExpenses,
 	deleteExpense,
 	getBiggestCategories,
 	getExpenses,
@@ -125,94 +119,6 @@ export const actions: Actions = {
 			date: new Date(date),
 			categoryId: categoryIdRaw && categoryIdRaw.length > 0 ? categoryIdRaw : null
 		});
-
-		return {
-			success: true
-		};
-	},
-	createMultipleExpenses: async (event) => {
-		const user = requireLogin();
-		const data = await event.request.formData();
-
-		// Parse the expenses array from form data
-		const expenses: Array<{
-			name: string;
-			amount: string;
-			date: string;
-			categoryId?: string | null;
-		}> = [];
-		let index = 0;
-
-		while (data.has(`expenses[${index}][name]`)) {
-			const name = data.get(`expenses[${index}][name]`)?.toString();
-			const amount = data.get(`expenses[${index}][amount]`)?.toString();
-			const date = data.get(`expenses[${index}][date]`)?.toString();
-			const categoryIdRaw = data.get(`expenses[${index}][categoryId]`)?.toString();
-
-			if (name && amount && date) {
-				expenses.push({
-					name,
-					amount,
-					date,
-					categoryId: categoryIdRaw && categoryIdRaw.length > 0 ? categoryIdRaw : null
-				});
-			}
-			index++;
-		}
-
-		if (expenses.length === 0) {
-			return fail(400, { message: 'No valid expenses provided' });
-		}
-
-		// Validate and convert expenses
-		const validExpenses: table.Expenses[] = [];
-
-		for (const expense of expenses) {
-			const amountValue = parseFloat(expense.amount);
-			if (isNaN(amountValue) || amountValue <= 0) {
-				return fail(400, { message: `Invalid amount for expense: ${expense.name}` });
-			}
-
-			// Convert UAH to cents
-			const amountCents = Math.round(amountValue * 100);
-
-			validExpenses.push({
-				id: nanoid(),
-				userId: user.id,
-				name: expense.name.trim(),
-				amountCents,
-				date: new Date(expense.date),
-				categoryId: expense.categoryId ?? null
-			});
-		}
-
-		await createMultipleExpenses(validExpenses);
-		return {
-			success: true,
-			count: validExpenses.length
-		};
-	},
-	createCategory: async (event) => {
-		const user = requireLogin();
-		const data = await event.request.formData();
-
-		const name = data.get('name')?.toString();
-		const color = data.get('color')?.toString();
-		const textColor = data.get('textColor')?.toString();
-
-		if (!name || !color || !textColor) {
-			return fail(400, { message: 'Missing required fields' });
-		}
-
-		const category: table.Categories = {
-			id: nanoid(),
-			userId: user.id,
-			name,
-			color,
-			textColor
-		};
-
-		await createCategory(category);
 
 		return {
 			success: true
