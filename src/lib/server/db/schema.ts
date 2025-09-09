@@ -45,7 +45,8 @@ export const categories = pgTable('categories', {
 		.notNull()
 		.references(() => user.id),
 	color: text('color').default('#000000'),
-	textColor: text('text_color').default('#ffffff')
+	textColor: text('text_color').default('#ffffff'),
+	description: text('description').default('')
 });
 
 export const expensesCategoriesRelations = relations(expenses, ({ one }) => ({
