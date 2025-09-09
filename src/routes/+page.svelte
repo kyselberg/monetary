@@ -605,7 +605,7 @@
 					<select
 						id="edit-category"
 						name="categoryId"
-						class="select-bordered select w-full"
+						class="select-bordered select w-full overflow-y-auto [&::picker(select)]:max-h-48"
 						bind:value={formData.categoryId}
 						disabled={isSubmitting}
 					>
@@ -816,7 +816,7 @@
 										<select
 											id="category-{index}"
 											name="expenses[{index}][categoryId]"
-											class="select-bordered select w-full"
+											class="select-bordered select w-full overflow-y-auto [&::picker(select)]:!max-h-48"
 											bind:value={expense.categoryId}
 											disabled={isSubmitting}
 										>
