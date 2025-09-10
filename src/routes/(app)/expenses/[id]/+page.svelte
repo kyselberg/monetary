@@ -50,7 +50,8 @@
 		return data.categories.find((c) => c.id === categoryId) ?? null;
 	}
 
-	// Note: Add/Create modals are now handled by the layout component
+	// Get current category
+	const currentCategory = getCategoryById(data.expenses[0]?.categoryId);
 
 	// Open delete confirmation modal
 	function openDeleteModal(expense: { id: string; name: string; amountCents: number; date: Date }) {
@@ -108,17 +109,28 @@
 	function handleFormDataChange(newFormData: typeof formData) {
 		formData = newFormData;
 	}
-
-	// Note: Multi-expense functions are now handled by the layout component
-
-	// Note: Modals are now handled by the layout component
 </script>
 
 <svelte:head>
-	<title>Expenses - Monetary</title>
+	<title>{currentCategory?.name || 'Category'} Expenses - Monetary</title>
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8">
+	<!-- Category Header -->
+	<div class="mb-6">
+		<div class="flex items-center gap-4">
+			{#if currentCategory}
+				<span
+					class="badge badge-lg px-4 py-2 text-lg"
+					style="background-color: {currentCategory.color}; color: {currentCategory.textColor}"
+				>
+					{currentCategory.name}
+				</span>
+			{/if}
+			<h1 class="text-3xl font-bold text-base-content">Expenses</h1>
+		</div>
+	</div>
+
 	{#if data.expenses && data.expenses.length > 0}
 		<!-- Summary Card -->
 		<div class="stats mb-6 shadow">
@@ -130,38 +142,18 @@
 				<div class="stat-desc">{data.expenses.length} transactions</div>
 			</div>
 			<div class="stat">
-				<div class="stat-title">Most Frequent</div>
+				<div class="stat-title">Average Expense</div>
 				<div class="stat-value text-secondary">
-					{#if data.mostFrequentCategories && data.mostFrequentCategories.length > 0}
-						{getCategoryById(data.mostFrequentCategories[0].categoryId)?.name || 'Uncategorized'}
-					{:else}
-						-
-					{/if}
+					{formatAmount(data.summary.average)}
 				</div>
-				<div class="stat-desc">
-					{#if data.mostFrequentCategories && data.mostFrequentCategories.length > 0}
-						{data.mostFrequentCategories[0].count} transactions
-					{:else}
-						0 transactions
-					{/if}
-				</div>
+				<div class="stat-desc">Per transaction</div>
 			</div>
 			<div class="stat">
-				<div class="stat-title">Biggest Category</div>
+				<div class="stat-title">Median Expense</div>
 				<div class="stat-value text-accent">
-					{#if data.biggestCategories && data.biggestCategories.length > 0}
-						{getCategoryById(data.biggestCategories[0].categoryId)?.name || 'Uncategorized'}
-					{:else}
-						-
-					{/if}
+					{formatAmount(data.summary.median)}
 				</div>
-				<div class="stat-desc">
-					{#if data.biggestCategories && data.biggestCategories.length > 0}
-						{formatAmount(data.biggestCategories[0].amount)}
-					{:else}
-						{formatAmount(0)}
-					{/if}
-				</div>
+				<div class="stat-desc">Middle value</div>
 			</div>
 		</div>
 
@@ -174,7 +166,6 @@
 								<th class="font-semibold text-base-content">Name</th>
 								<th class="font-semibold text-base-content">Date</th>
 								<th class="font-semibold text-base-content">Amount</th>
-								<th class="font-semibold text-base-content">Category</th>
 								<th class="font-semibold text-base-content">Actions</th>
 							</tr>
 						</thead>
@@ -191,24 +182,6 @@
 										<span class="badge badge-outline badge-lg">
 											{formatAmount(expense.amountCents)}
 										</span>
-									</td>
-									<td class="font-medium text-base-content">
-										{#if getCategoryById(expense.categoryId)}
-											{#key expense.categoryId}
-												<a
-													href={`/expenses/${expense.categoryId}`}
-													class="badge badge-lg"
-													style="background-color: {getCategoryById(expense.categoryId)
-														?.color}; color: {getCategoryById(expense.categoryId)?.textColor}"
-													role="button"
-													tabindex="0"
-												>
-													{getCategoryById(expense.categoryId)?.name}
-												</a>
-											{/key}
-										{:else}
-											<span class="badge badge-ghost badge-lg">Uncategorized</span>
-										{/if}
 									</td>
 									<td>
 										<div class="flex gap-2">
@@ -276,12 +249,12 @@
 							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
 						/>
 					</svg>
-					<h2 class="mb-4 text-2xl font-bold text-base-content">No expenses yet</h2>
-					<p class="mb-6 text-base-content/70">
-						Start tracking your expenses by adding your first transaction.
-					</p>
+					<h2 class="mb-4 text-2xl font-bold text-base-content">
+						No expenses in this category yet
+					</h2>
+					<p class="mb-6 text-base-content/70">This category doesn't have any expenses yet.</p>
 					<p class="text-base-content/70">
-						Use the floating button in the bottom-right corner to add your first expenses
+						Use the floating button in the bottom-right corner to add expenses to this category
 					</p>
 				</div>
 			</div>
@@ -309,5 +282,3 @@
 	onSuccess={handleEditSuccess}
 	onFormDataChange={handleFormDataChange}
 />
-
-<!-- Modals are now handled by the layout component -->
