@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import favicon from '$lib/assets/favicon.svg';
+	import favicon from '$lib/assets/favicon.png';
 	import FloatingActionButton from '$lib/components/FloatingActionButton.svelte';
 	import type { Snippet } from 'svelte';
 	import '../../app.css';

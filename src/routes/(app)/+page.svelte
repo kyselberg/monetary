@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import DeleteExpenseModal from '$lib/components/DeleteExpenseModal.svelte';
+	import EditExpenseModal from '$lib/components/EditExpenseModal.svelte';
 	import { nanoid } from 'nanoid';
 	import type { PageServerData } from './$types';
 	let { data }: { data: PageServerData } = $props();
@@ -103,6 +105,11 @@
 		// The page will automatically refresh due to the form submission
 	}
 
+	// Handle form data changes from the modal
+	function handleFormDataChange(newFormData: typeof formData) {
+		formData = newFormData;
+	}
+
 	// Note: Multi-expense functions are now handled by the layout component
 
 	// Note: Modals are now handled by the layout component
@@ -189,13 +196,16 @@
 									<td class="font-medium text-base-content">
 										{#if getCategoryById(expense.categoryId)}
 											{#key expense.categoryId}
-												<span
+												<a
+													href={`/expenses/${expense.categoryId}`}
 													class="badge badge-lg"
 													style="background-color: {getCategoryById(expense.categoryId)
 														?.color}; color: {getCategoryById(expense.categoryId)?.textColor}"
+													role="button"
+													tabindex="0"
 												>
 													{getCategoryById(expense.categoryId)?.name}
-												</span>
+												</a>
 											{/key}
 										{:else}
 											<span class="badge badge-ghost badge-lg">Uncategorized</span>
@@ -281,86 +291,13 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-{#if showDeleteModal && expenseToDelete}
-	<div class="modal-open modal">
-		<div class="modal-box">
-			<div class="mb-4 flex items-center justify-between">
-				<h3 class="text-2xl font-bold text-base-content">Delete Expense</h3>
-				<button
-					class="btn btn-circle btn-ghost btn-sm"
-					onclick={closeDeleteModal}
-					aria-label="Close modal"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-6 w-6"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					</svg>
-				</button>
-			</div>
-
-			<div class="mb-6">
-				<p class="mb-4 text-base-content/80">
-					Are you sure you want to delete this expense? This action cannot be undone.
-				</p>
-
-				<div class="rounded-lg bg-base-200 p-4">
-					<div class="flex items-center justify-between">
-						<div>
-							<h4 class="font-semibold text-base-content">{expenseToDelete.name}</h4>
-							<p class="text-sm text-base-content/70">{formatDate(expenseToDelete.date)}</p>
-						</div>
-						<div class="text-right">
-							<span class="badge badge-outline badge-lg">
-								{formatAmount(expenseToDelete.amountCents)}
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="modal-action">
-				<button class="btn btn-ghost" onclick={closeDeleteModal} disabled={isSubmitting}>
-					Cancel
-				</button>
-				<form use:enhance={handleDeleteSuccess} action="?/deleteExpense" method="post">
-					<input type="hidden" name="expenseId" value={expenseToDelete.id} />
-					<button class="btn btn-error" type="submit" disabled={isSubmitting}>
-						{#if isSubmitting}
-							<span class="loading loading-sm loading-spinner"></span>
-							Deleting...
-						{:else}
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="h-4 w-4"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-								/>
-							</svg>
-							Delete Expense
-						{/if}
-					</button>
-				</form>
-			</div>
-		</div>
-	</div>
-{/if}
+<DeleteExpenseModal
+	show={showDeleteModal}
+	expense={expenseToDelete}
+	isSubmitting={isSubmitting}
+	onClose={closeDeleteModal}
+	onSuccess={handleDeleteSuccess}
+/>
 
 <!-- Edit Expense Modal -->
 {#if showEditModal && expenseToEdit}
