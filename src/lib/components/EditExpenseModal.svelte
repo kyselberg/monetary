@@ -17,7 +17,6 @@
 	}
 
 	interface FormData {
-		id: string;
 		name: string;
 		amount: string;
 		date: string;
@@ -50,7 +49,6 @@
 	$effect(() => {
 		if (expense) {
 			const newFormData = {
-				id: expense.id,
 				name: expense.name,
 				amount: (expense.amountCents / 100).toFixed(2),
 				date: expense.date.toISOString().split('T')[0],

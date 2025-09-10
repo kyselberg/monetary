@@ -1,7 +1,6 @@
 <script lang="ts">
 	import DeleteExpenseModal from '$lib/components/DeleteExpenseModal.svelte';
 	import EditExpenseModal from '$lib/components/EditExpenseModal.svelte';
-	import { nanoid } from 'nanoid';
 	import type { PageServerData } from './$types';
 	let { data }: { data: PageServerData } = $props();
 
@@ -21,7 +20,6 @@
 
 	// Form data for single expense (edit modal)
 	let formData = $state({
-		id: '',
 		name: '',
 		amount: '',
 		date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
@@ -75,7 +73,6 @@
 		expenseToEdit = expense;
 		// Pre-populate form with expense data
 		formData = {
-			id: expense.id,
 			name: expense.name,
 			amount: (expense.amountCents / 100).toFixed(2),
 			date: expense.date.toISOString().split('T')[0],
@@ -90,7 +87,6 @@
 		expenseToEdit = null;
 		// Reset form
 		formData = {
-			id: nanoid(),
 			name: '',
 			amount: '',
 			date: new Date().toISOString().split('T')[0],
