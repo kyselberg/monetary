@@ -57,6 +57,17 @@
 			onFormDataChange(newFormData);
 		}
 	});
+
+	$effect(() => {
+		if (show) {
+			const nameInput = document.getElementById('edit-name') as HTMLInputElement;
+			if (nameInput) {
+				setTimeout(() => {
+					nameInput.focus();
+				}, 50);
+			}
+		}
+	});
 </script>
 
 {#if show && expense}
