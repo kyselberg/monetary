@@ -2,7 +2,8 @@
 	import { nanoid } from 'nanoid';
 	import type { PageData } from '../../routes/(app)/$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data, preselectedCategoryId }: { data: PageData; preselectedCategoryId?: string } =
+		$props();
 
 	let showPopover = $state(false);
 	let popoverRef: HTMLDivElement;
@@ -57,7 +58,7 @@
 					name: '',
 					amount: '',
 					date: new Date().toISOString().split('T')[0],
-					categoryId: ''
+					categoryId: preselectedCategoryId || ''
 				}
 			]
 		};
@@ -161,7 +162,7 @@
 			name: '',
 			amount: '',
 			date: new Date().toISOString().split('T')[0],
-			categoryId: ''
+			categoryId: preselectedCategoryId || ''
 		});
 	}
 
@@ -178,7 +179,7 @@
 				name: '',
 				amount: '',
 				date: new Date().toISOString().split('T')[0],
-				categoryId: ''
+				categoryId: preselectedCategoryId || ''
 			}
 		];
 	}

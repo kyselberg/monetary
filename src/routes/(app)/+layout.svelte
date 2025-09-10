@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import favicon from '$lib/assets/favicon.png';
 	import FloatingActionButton from '$lib/components/FloatingActionButton.svelte';
 	import type { Snippet } from 'svelte';
@@ -7,6 +8,9 @@
 	import type { PageData } from './$types';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
+
+	// Extract category ID from URL if we're on a category page
+	let preselectedCategoryId = $derived($page.params.id || undefined);
 </script>
 
 <svelte:head>
@@ -212,4 +216,4 @@
 {@render children?.()}
 
 <!-- Floating Action Button Component -->
-<FloatingActionButton {data} />
+<FloatingActionButton {data} {preselectedCategoryId} />
