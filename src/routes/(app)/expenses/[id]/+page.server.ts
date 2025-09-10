@@ -1,11 +1,6 @@
 import { requireLogin } from '$lib';
 import { getCategories } from '$lib/server/categories';
-import {
-	getBiggestCategories,
-	getExpenses,
-	getExpensesSummary,
-	getMostFrequentCategories
-} from '$lib/server/expenses';
+import { getOwnExpensesByCategory, getOwnExpensesByCategorySummary } from '$lib/server/expenses';
 import {
 	handleCreateExpense,
 	handleDeleteExpense,
@@ -15,20 +10,16 @@ import {
 } from '$lib/server/form-actions';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ params }) => {
 	const user = requireLogin();
-	const expenses = await getExpenses(user.id);
-	const summary = await getExpensesSummary(user.id);
+	const expenses = await getOwnExpensesByCategory(user.id, params.id);
+	const summary = await getOwnExpensesByCategorySummary(user.id, params.id);
 	const categories = await getCategories(user.id);
-	const mostFrequentCategories = await getMostFrequentCategories(user.id);
-	const biggestCategories = await getBiggestCategories(user.id);
 
 	return {
 		expenses,
 		summary,
-		categories,
-		mostFrequentCategories,
-		biggestCategories
+		categories
 	};
 };
 
