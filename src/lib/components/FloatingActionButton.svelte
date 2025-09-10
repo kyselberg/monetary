@@ -1,6 +1,15 @@
 <script lang="ts">
 	import { nanoid } from 'nanoid';
+	import { onMount } from 'svelte';
 	import type { PageData } from '../../routes/(app)/$types';
+
+	onMount( ()=> {
+		window.addEventListener('keydown', (e) => {
+			if (e.key.toLowerCase() === 'e' && (e.ctrlKey || e.metaKey)) {
+				openModal();
+			}
+		});
+	})
 
 	let { data, preselectedCategoryId }: { data: PageData; preselectedCategoryId?: string } =
 		$props();
