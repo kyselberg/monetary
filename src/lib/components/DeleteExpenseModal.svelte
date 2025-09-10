@@ -41,11 +41,7 @@
 		<div class="modal-box">
 			<div class="mb-4 flex items-center justify-between">
 				<h3 class="text-2xl font-bold text-base-content">Delete Expense</h3>
-				<button
-					class="btn btn-circle btn-ghost btn-sm"
-					onclick={onClose}
-					aria-label="Close modal"
-				>
+				<button class="btn btn-circle btn-ghost btn-sm" onclick={onClose} aria-label="Close modal">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						class="h-6 w-6"
@@ -84,9 +80,7 @@
 			</div>
 
 			<div class="modal-action">
-				<button class="btn btn-ghost" onclick={onClose} disabled={isSubmitting}>
-					Cancel
-				</button>
+				<button class="btn btn-ghost" onclick={onClose} disabled={isSubmitting}> Cancel </button>
 				<form use:enhance={onSuccess} action="?/deleteExpense" method="post">
 					<input type="hidden" name="expenseId" value={expense.id} />
 					<button class="btn btn-error" type="submit" disabled={isSubmitting}>

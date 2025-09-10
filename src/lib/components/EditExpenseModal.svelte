@@ -35,7 +35,16 @@
 		onFormDataChange: (data: FormData) => void;
 	}
 
-	let { show, expense, formData, categories, isSubmitting, onClose, onSuccess, onFormDataChange }: Props = $props();
+	let {
+		show,
+		expense,
+		formData,
+		categories,
+		isSubmitting,
+		onClose,
+		onSuccess,
+		onFormDataChange
+	}: Props = $props();
 
 	// Update form data when expense changes
 	$effect(() => {
@@ -57,11 +66,7 @@
 		<div class="modal-box">
 			<div class="mb-4 flex items-center justify-between">
 				<h3 class="text-2xl font-bold text-base-content">Edit Expense</h3>
-				<button
-					class="btn btn-circle btn-ghost btn-sm"
-					onclick={onClose}
-					aria-label="Close modal"
-				>
+				<button class="btn btn-circle btn-ghost btn-sm" onclick={onClose} aria-label="Close modal">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						class="h-6 w-6"
@@ -170,12 +175,7 @@
 				</div>
 
 				<div class="modal-action">
-					<button
-						class="btn btn-ghost"
-						type="button"
-						onclick={onClose}
-						disabled={isSubmitting}
-					>
+					<button class="btn btn-ghost" type="button" onclick={onClose} disabled={isSubmitting}>
 						Cancel
 					</button>
 					<button class="btn btn-primary" type="submit" disabled={isSubmitting}>

@@ -266,7 +266,7 @@
 <DeleteExpenseModal
 	show={showDeleteModal}
 	expense={expenseToDelete}
-	isSubmitting={isSubmitting}
+	{isSubmitting}
 	onClose={closeDeleteModal}
 	onSuccess={handleDeleteSuccess}
 />
@@ -275,9 +275,9 @@
 <EditExpenseModal
 	show={showEditModal}
 	expense={expenseToEdit}
-	formData={formData}
+	{formData}
 	categories={data.categories}
-	isSubmitting={isSubmitting}
+	{isSubmitting}
 	onClose={closeEditModal}
 	onSuccess={handleEditSuccess}
 	onFormDataChange={handleFormDataChange}
