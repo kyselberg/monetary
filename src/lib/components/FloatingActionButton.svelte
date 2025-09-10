@@ -3,13 +3,13 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from '../../routes/(app)/$types';
 
-	onMount( ()=> {
+	onMount(() => {
 		window.addEventListener('keydown', (e) => {
 			if (e.key.toLowerCase() === 'e' && (e.ctrlKey || e.metaKey)) {
 				openModal();
 			}
 		});
-	})
+	});
 
 	let { data, preselectedCategoryId }: { data: PageData; preselectedCategoryId?: string } =
 		$props();
